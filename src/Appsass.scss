@@ -1,0 +1,11 @@
+@import "bulma/sass/utilities/_all.sass";
+@import "bulma/sass/elements/button.sass";
+
+form {
+    display:flex;
+    padding: 10px;
+}
+
+input {
+    margin-right: 10px;
+}
