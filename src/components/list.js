@@ -1,24 +1,31 @@
 import { Component } from "react";
 import React from 'react';
-
+import List from '@material-ui/core/List';
 import TaskCell from './task-cell';
+import Divider from '@material-ui/core/Divider';
+import Box from '@material-ui/core/Box';
+import ListItem from '@material-ui/core/ListItem'
 
-class List extends React.Component {
+class TodoList extends React.Component {
     constructor(props) {
         super(props);
     }
 
     render() {
         return(
-            <ul>
+<List>
               {this.props.todos.map(item => {
                 return (
-                    <TaskCell key={item.id} id={item.id} value={item.value} onDelete={this.props.onDelete}/>
+                    <ListItem id="todoItem" key={item.id}>
+                    {item.value}
+                    <button className="delete is-pulled-right" onClick={() => this.props.onDelete(item.id)}></button>
+                  </ListItem>
                 )
               })}
-            </ul>
+            </List>
+            
         )
     }
 }
 
-export default List;
+export default TodoList;

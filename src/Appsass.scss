@@ -7,26 +7,24 @@ $panel-heading-color: white;
 @import "../node_modules/bulma/bulma.sass";
 
 
-form {
-    display:flex;
-    padding: 10px;
-    width: 100%;
-
-}
-
 input {
     margin-right: 10px;
 }
 
-.category-header {
-    margin-top: 25px;
-    margin-left: 12px;
+.mainpage {
+    margin-left: 240px;
+    padding-right: 12px;
+    padding-top: 12px;
+    padding-left: 12px;
 }
 
-.category-list {
-    margin-top: 25px;
+#btnAddTask {
+    width: 100%;
+    height: 100%;
 }
 
-.category-item:hover {
-    background-color: lightgray;
+
+
+#todo-header {
+    margin: 12px;
 }
