@@ -65,9 +65,19 @@ class App extends Component {
 
   render() {
     return (
-      <div className="App">
-        <div>
-          <div className="add-div">
+      <div className="App columns">
+        <div className="column is-one-third">
+           <div className="category-header">
+             <i class="fa fa-bars fa-2x" aria-hidden="true"></i>
+             <div className="category-list">
+                <ul>
+                  <li className="category-item">My Day</li>
+                </ul>
+             </div>
+           </div>
+        </div>
+        <div className="card column todo-wrapper">
+          <div className="card-header">
             <form onSubmit={this.handleSubmit}>
               <input
                 type="text"

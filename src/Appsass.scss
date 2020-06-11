@@ -1,11 +1,32 @@
-@import "bulma/sass/utilities/_all.sass";
-@import "bulma/sass/elements/button.sass";
+$panel-heading-background-color: #48c774;
+$panel-heading-color: white;
+// if you use .is-success it will override your override
+// if you wish to override in bulma you must have your values before the import
+
+
+@import "../node_modules/bulma/bulma.sass";
+
 
 form {
     display:flex;
     padding: 10px;
+    width: 100%;
+
 }
 
 input {
     margin-right: 10px;
+}
+
+.category-header {
+    margin-top: 25px;
+    margin-left: 12px;
+}
+
+.category-list {
+    margin-top: 25px;
+}
+
+.category-item:hover {
+    background-color: lightgray;
 }

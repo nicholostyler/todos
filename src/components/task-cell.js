@@ -9,7 +9,7 @@ class TaskCell extends Component {
 
     render() {
         return(
-            <li key={this.props.id}>
+            <li className="list-item" key={this.props.id}>
                     {this.props.value}
                     <button className="delete is-pulled-right" onClick={() => this.props.onDelete(this.props.id)}>X</button>
                   </li>
