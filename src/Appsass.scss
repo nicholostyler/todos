@@ -3,28 +3,17 @@ $panel-heading-color: white;
 // if you use .is-success it will override your override
 // if you wish to override in bulma you must have your values before the import
 
-
-@import "../node_modules/bulma/bulma.sass";
-
-
 input {
     margin-right: 10px;
 }
 
-.mainpage {
-    margin-left: 240px;
-    padding-right: 12px;
+.taskInput {
+    padding-left: 0px;
     padding-top: 12px;
-    padding-left: 12px;
+    padding-right: 12px;
 }
 
 #btnAddTask {
     width: 100%;
     height: 100%;
-}
-
-
-
-#todo-header {
-    margin: 12px;
 }

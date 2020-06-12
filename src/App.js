@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import './Appsass.scss';
+import clsx from 'clsx';
+
 import TodoList from './components/list';
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
@@ -18,6 +20,10 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Brightness5 from '@material-ui/icons/Brightness5';
 import HomeWork from '@material-ui/icons/HomeWork';
 import Divider from '@material-ui/core/Divider';
+import DeleteIcon from '@material-ui/icons/Delete';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import Checkbox from '@material-ui/core/Checkbox';
+import Hidden from '@material-ui/core/Hidden';
 
 import Button from '@material-ui/core/Button';
 
@@ -27,24 +33,40 @@ const styles = theme => ({
   root: {
     display: 'flex',
   },
-  appBar: {
-    zIndex: theme.zIndex.drawer + 1,
-  },
   drawer: {
-    width: drawerWidth,
-    flexShrink: 0,
+    [theme.breakpoints.up('sm')]: {
+      width: drawerWidth,
+      flexShrink: 0,
+    },
   },
+  appBar: {
+    [theme.breakpoints.up('sm')]: {
+      width: `calc(100% - ${drawerWidth}px)`,
+      marginLeft: drawerWidth,
+    },
+  },
+
+
+  menuButton: {
+    marginRight: theme.spacing(2),
+    [theme.breakpoints.up('sm')]: {
+      display: 'none',
+    },
+  },
+  // necessary for content to be below app bar
+  toolbar: theme.mixins.toolbar,
   drawerPaper: {
     width: drawerWidth,
   },
-  drawerContainer: {
-    overflow: 'auto',
-  },
   content: {
+    [theme.breakpoints.up('sm')]: {
+      marginLeft: 240
+    },
     flexGrow: 1,
-    padding: theme.spacing(3),
   },
+
 });
+
 
 
 class App extends Component {
@@ -54,6 +76,7 @@ class App extends Component {
     this.state = {
       newTask: "",
       todos: [],
+      open: false,
     };
 
   }
@@ -107,26 +130,36 @@ class App extends Component {
     });
   }
 
+  handleDrawerToggle = () => {
+    this.setState(state => ({ open: !this.state.open }))
+  }
+  
+
   render() {
     const { classes } = this.props;
     return (
-      <div className="App ">
+      <div className="App classes.root">
         <AppBar position="fixed" className={classes.appBar}>
-          <Toolbar>
-            <IconButton edge="start" color="inherit" aria-label="menu">
+          <Toolbar >
+            <IconButton edge="start" color="inherit" aria-label="menu" onClick={this.handleDrawerToggle}>
               <MenuIcon />
             </IconButton>
             <Typography varient="h6">Tasks</Typography>
           </Toolbar>
         </AppBar>
+        <nav className={classes.drawer}>
+        <Hidden smUp implementation="css">
         <Drawer
-        className={classes.drawer}
-        variant="permanent"
+        anchor='left'
+        container={classes.container}
+        variant="temporary"
+        onClose={this.handleDrawerToggle}
+        open={this.state.open}
         classes={{
           paper: classes.drawerPaper,
         }}
       >
-        <Toolbar />
+        <Toolbar className={classes.toolbar} />
         <div className={classes.drawerContainer}>
           <List>
             {['My Day', 'The Weekend', 'Next Month', 'This Year'].map((text, index) => (
@@ -147,10 +180,44 @@ class App extends Component {
           </List>
         </div>
       </Drawer>
-        <main className="mainpage">
+        </Hidden>
+        <Hidden xsDown implementation="css">
+        <Drawer
+        anchor='left'
+        variant="persistent"
+        open
+        classes={{
+          paper: classes.drawerPaper,
+        }}
+      >
+        <Toolbar className={classes.toolbar}/>
+        <div className={classes.drawerContainer}>
+          <List>
+            {['My Day', 'The Weekend', 'Next Month', 'This Year'].map((text, index) => (
+              <ListItem button key={text}>
+                <ListItemIcon>{index % 2 === 0 ? <Brightness5 /> : <Brightness5 />}</ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItem>
+            ))}
+          </List>
+          <Divider />
+          <List>
+            {['CompTIA exam', 'Programming', 'Schoolwork'].map((text, index) => (
+              <ListItem button key={text}>
+                <ListItemIcon>{index % 2 === 0 ? <HomeWork /> : <HomeWork />}</ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItem>
+            ))}
+          </List>
+        </div>
+      </Drawer>
+        </Hidden>
+        </nav>
+        
+        <main className={classes.content}>
           <Toolbar/>
-          <Grid container direction="row" justify="space-evenly">
-              <Grid item xs={10}>
+          <Grid className="taskInput" container direction="row">
+              <Grid item xs={8}>
                 <TextField 
                 id="outlined-basic" 
                 fullWidth  
@@ -168,7 +235,14 @@ class App extends Component {
                 this.state.todos.map((item) => {
                   return(
                   <ListItem key={item.id} button divider>
+                    <Checkbox checked={false} tabIndex={-1} disableRipple/>
+
                     <ListItemText id={item.id} primary={item.value}/>
+                    <ListItemSecondaryAction>
+                      <IconButton aria-label="DeleteIcon" onClick={() => this.deleteTask(item.id)}>
+                        <DeleteIcon/>
+                      </IconButton>
+                    </ListItemSecondaryAction>
                   </ListItem>
     )})
               }  
