@@ -1,8 +1,5 @@
 import React, { Component } from "react";
 import './Appsass.scss';
-import clsx from 'clsx';
-
-import TodoList from './components/list';
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import ListItem from '@material-ui/core/ListItem'
@@ -13,61 +10,17 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import Drawer from '@material-ui/core/Drawer';
-import { withStyles } from '@material-ui/core/styles';
-
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import Brightness5 from '@material-ui/icons/Brightness5';
-import HomeWork from '@material-ui/icons/HomeWork';
-import Divider from '@material-ui/core/Divider';
-import DeleteIcon from '@material-ui/icons/Delete';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import Checkbox from '@material-ui/core/Checkbox';
-import Hidden from '@material-ui/core/Hidden';
-
+import Snackbar from '@material-ui/core/Snackbar';
 import Button from '@material-ui/core/Button';
-
-const drawerWidth = 240;
-
-const styles = theme => ({
-  root: {
-    display: 'flex',
-  },
-  drawer: {
-    [theme.breakpoints.up('sm')]: {
-      width: drawerWidth,
-      flexShrink: 0,
-    },
-  },
-  appBar: {
-    [theme.breakpoints.up('sm')]: {
-      width: `calc(100% - ${drawerWidth}px)`,
-      marginLeft: drawerWidth,
-    },
-  },
+import Checkbox from '@material-ui/core/Checkbox';
+import DeleteIcon from '@material-ui/icons/DeleteOutline';
+import MuiAlert from '@material-ui/lab/Alert';
 
 
-  menuButton: {
-    marginRight: theme.spacing(2),
-    [theme.breakpoints.up('sm')]: {
-      display: 'none',
-    },
-  },
-  // necessary for content to be below app bar
-  toolbar: theme.mixins.toolbar,
-  drawerPaper: {
-    width: drawerWidth,
-  },
-  content: {
-    [theme.breakpoints.up('sm')]: {
-      marginLeft: 240
-    },
-    flexGrow: 1,
-  },
-
-});
-
-
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+};
 
 class App extends Component {
   constructor(props) {
@@ -75,17 +28,40 @@ class App extends Component {
 
     this.state = {
       newTask: "",
+      categories: [],
       todos: [],
       open: false,
+      snackbarMessage: ""
     };
-
   }
 
-  
+  componentDidMount() {
+    // put in componentDidMount before application is rendered.
+    this.populateFromLocalStorage();
+  }
 
- 
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.todos !== this.state.todos) {
+      this.saveToLocalStorage();
+    }
+  }
+
   handleSubmit = (e) => {
     e.preventDefault();
+  }
+
+ 
+
+  saveToLocalStorage() {
+    localStorage.setItem('tasks', JSON.stringify(this.state.todos));
+  }
+
+  populateFromLocalStorage() {
+    var storageTasks = JSON.parse(localStorage.getItem('tasks'));
+    this.setState({
+      todos: storageTasks
+    });
+
   }
 
   updateInput(key, value) {
@@ -96,6 +72,13 @@ class App extends Component {
   }
 
   addTask() {
+    // check if task value is not empty.
+    if (this.state.newTask == "") {
+      this.setState({
+        snackbarMessage: "Task description cannot be empty!",
+        open: true,
+      });  
+    } else {
     // create task with unique ID
     const newTask = {
       id: 1 + Math.random(),
@@ -114,13 +97,15 @@ class App extends Component {
       newTask: "",
     });
 
-    console.log(this.state);
   }
 
+  // clear textfield
+}
+
   deleteTask(id) {
-    console.log(id);
     // copy current list of items
     const list = [...this.state.todos];
+    console.log(this.state.todos);
 
     // filter out item being deleted
     const updatedList = list.filter(item => item.id != id);
@@ -128,100 +113,50 @@ class App extends Component {
     this.setState({
       todos: updatedList,
     });
+
   }
 
   handleDrawerToggle = () => {
     this.setState(state => ({ open: !this.state.open }))
   }
-  
 
+  snackbarClose() {
+    this.setState({
+      open: false,
+    });
+  }
+  
   render() {
-    const { classes } = this.props;
     return (
-      <div className="App classes.root">
-        <AppBar position="fixed" className={classes.appBar}>
-          <Toolbar >
+      <div className="App">
+        <AppBar position="fixed">
+          <Toolbar>
             <IconButton edge="start" color="inherit" aria-label="menu" onClick={this.handleDrawerToggle}>
               <MenuIcon />
             </IconButton>
             <Typography varient="h6">Tasks</Typography>
           </Toolbar>
         </AppBar>
-        <nav className={classes.drawer}>
-        <Hidden smUp implementation="css">
-        <Drawer
-        anchor='left'
-        container={classes.container}
-        variant="temporary"
-        onClose={this.handleDrawerToggle}
-        open={this.state.open}
-        classes={{
-          paper: classes.drawerPaper,
-        }}
-      >
-        <Toolbar className={classes.toolbar} />
-        <div className={classes.drawerContainer}>
-          <List>
-            {['My Day', 'The Weekend', 'Next Month', 'This Year'].map((text, index) => (
-              <ListItem button key={text}>
-                <ListItemIcon>{index % 2 === 0 ? <Brightness5 /> : <Brightness5 />}</ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItem>
-            ))}
-          </List>
-          <Divider />
-          <List>
-            {['CompTIA exam', 'Programming', 'Schoolwork'].map((text, index) => (
-              <ListItem button key={text}>
-                <ListItemIcon>{index % 2 === 0 ? <HomeWork /> : <HomeWork />}</ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItem>
-            ))}
-          </List>
-        </div>
-      </Drawer>
-        </Hidden>
-        <Hidden xsDown implementation="css">
-        <Drawer
-        anchor='left'
-        variant="persistent"
-        open
-        classes={{
-          paper: classes.drawerPaper,
-        }}
-      >
-        <Toolbar className={classes.toolbar}/>
-        <div className={classes.drawerContainer}>
-          <List>
-            {['My Day', 'The Weekend', 'Next Month', 'This Year'].map((text, index) => (
-              <ListItem button key={text}>
-                <ListItemIcon>{index % 2 === 0 ? <Brightness5 /> : <Brightness5 />}</ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItem>
-            ))}
-          </List>
-          <Divider />
-          <List>
-            {['CompTIA exam', 'Programming', 'Schoolwork'].map((text, index) => (
-              <ListItem button key={text}>
-                <ListItemIcon>{index % 2 === 0 ? <HomeWork /> : <HomeWork />}</ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItem>
-            ))}
-          </List>
-        </div>
-      </Drawer>
-        </Hidden>
-        </nav>
         
-        <main className={classes.content}>
+        <main>
           <Toolbar/>
+          <Snackbar 
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          open={this.state.open}  
+          handleClose={this.snackbarClose}
+          autoHideDuration={6000}
+          >
+            <Alert onClose={this.snackbarClose} severity="error">
+              New task cannot be empty!  
+            </Alert>
+          </Snackbar>
           <Grid className="taskInput" container direction="row">
-              <Grid item xs={8}>
+              <Grid item xs={10}>
                 <TextField 
                 id="outlined-basic" 
                 fullWidth  
                 label="Add item..."
+                value={this.state.newTask}
                 onChange={(e) => this.updateInput("newTask", e.target.value)} 
                 variant="outlined" />
               </Grid>
@@ -229,7 +164,7 @@ class App extends Component {
               <Button variant="contained" color="primary" disableElevation id="btnAddTask" onClick={() => this.addTask()}>Add</Button>
               </Grid>
           </Grid>
-          <div >
+          <div>
             <List component="nav">
               {
                 this.state.todos.map((item) => {
@@ -256,4 +191,4 @@ class App extends Component {
     );
   }
 }
-export default withStyles(styles)(App);
+export default App;
